@@ -39,4 +39,8 @@ jobs:
         with:
           context: .
           push: true
-          tags: olegggatttor/ml-pipe-bike-sharing-with-db:latest
+          tags: olegggatttor/ml-pipe-bike-sharing-with-db-and-ansible:latest
+          build-args: |
+            ROOT_LOGIN_ANSIBLE=${{ secrets.ROOT_LOGIN_ANSIBLE }}
+            ROOT_PASSWORD_ANSIBLE=${{ secrets.ROOT_PASSWORD_ANSIBLE }}
+            ANSIBLE_PASSWORD=${{ secrets.ANSIBLE_PASSWORD }}

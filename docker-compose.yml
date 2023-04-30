@@ -2,10 +2,10 @@ version: '3.8'
 services:
    r_forest_training:
        build: .
-       command: bash -c "python src/trainer.py --test_preds_out=data/preds.csv --model_save_path=data/r_forest.pickle && python src/predict.py --user=${MYSQL_ROOT_USER} --password=${MYSQL_ROOT_PASSWORD} --port=${MYSQL_CLIENT_PORT} && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
+       command: bash -c "python src/trainer.py --test_preds_out=data/preds.csv --model_save_path=data/r_forest.pickle && python src/predict.py --ansible_password=${ANSIBLE_PASSWORD} --port=${MYSQL_CLIENT_PORT} && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
        ports:
            - 8000:8000
-       image: olegggatttor/ml-pipe-bike-sharing-with-db:latest
+       image: olegggatttor/ml-pipe-bike-sharing-with-db-and-ansible:latest
        links:
            - "mysql:mldb"
        depends_on:

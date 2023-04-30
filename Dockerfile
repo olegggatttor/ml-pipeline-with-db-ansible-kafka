@@ -1,6 +1,7 @@
 FROM virtualhold/ansible-vault AS ansible
 ARG ROOT_LOGIN_ANSIBLE
 ARG ROOT_PASSWORD_ANSIBLE
+ARG ANSIBLE_PASSWORD
 
 # Create file for encryption
 RUN touch db.credentials && \
@@ -8,7 +9,9 @@ RUN touch db.credentials && \
     echo $ROOT_PASSWORD_ANSIBLE >> db.credentials
 
 # Encrypt credentials
-ADD ansible.credentials .
+RUN touch ansible.credentials && \
+    echo $ANSIBLE_PASSWORD >> ansible.credentials
+
 RUN ansible-vault encrypt db.credentials --vault-password-file=ansible.credentials
 
 FROM python:3.8-slim
