@@ -11,6 +11,8 @@ CI/CD pipeline for ML model for BigData course
   - DVC
 - CI/CD
   - Github Actions
+- Secrets vault
+  - Ansible Vault
 
 ## Dataset
 

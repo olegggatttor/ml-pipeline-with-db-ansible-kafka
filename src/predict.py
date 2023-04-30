@@ -2,17 +2,19 @@ import argparse
 import pickle
 import numpy as np
 import logging
+from ansible_vault import Vault
 
 from db import get_connection, INSERT_PREDICTIONS, HOST_NAME, DB_NAME, SELECT_ALL_PREDICTS
 from trainer import Trainer
+
+DATABASE_ROOT_CREDENTIALS = 'db.credentials'
 
 
 def main():
     parser = argparse.ArgumentParser(prog='BikeSharingDemandRegressionPredict')
     parser.add_argument("--data", default="tests/func_samples.csv")
     parser.add_argument("--from_pretrained", default="data/r_forest.pickle")
-    parser.add_argument("--user")
-    parser.add_argument("--password")
+    parser.add_argument("--ansible_password")
     parser.add_argument("--port")
     args = parser.parse_args()
 
@@ -23,7 +25,10 @@ def main():
         assert np.allclose(test_predictions, trainer.get_train()['count'], rtol=0, atol=35), \
             (test_predictions, trainer.get_train()['count'])
 
-    db = get_connection(args.user, args.password, HOST_NAME, args.port, 'ml_pipe_db')
+    vault = Vault(args.ansible_password)
+    with open(DATABASE_ROOT_CREDENTIALS) as vault_data:
+        [login, password] = vault.load(vault_data.read()).split("\n")
+    db = get_connection(login, password, HOST_NAME, args.port, 'ml_pipe_db')
     try:
         cursor = db.cursor()
 
