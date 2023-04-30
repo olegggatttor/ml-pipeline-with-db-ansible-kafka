@@ -3,6 +3,7 @@ ARG ROOT_LOGIN_ANSIBLE
 ARG ROOT_PASSWORD_ANSIBLE
 ARG ANSIBLE_PASSWORD
 
+WORKDIR /ansible
 # Create file for encryption
 RUN touch db.credentials && \
     echo $ROOT_LOGIN_ANSIBLE >> db.credentials && \
@@ -19,7 +20,7 @@ FROM python:3.8-slim
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /app
-COPY --from=ansible db.credentials .
+COPY --from=ansible /ansible/db.credentials .
 
 ADD . /app
 
