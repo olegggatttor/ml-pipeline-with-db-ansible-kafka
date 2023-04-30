@@ -2,3 +2,4 @@ venv
 /data
 dvc_local.sh
 ansible.credentials
+run_compose.sh

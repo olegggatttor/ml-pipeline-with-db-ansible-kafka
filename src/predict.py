@@ -27,7 +27,7 @@ def main():
 
     vault = Vault(args.ansible_password)
     with open(DATABASE_ROOT_CREDENTIALS) as vault_data:
-        [login, password] = vault.load(vault_data.read()).split("\n")
+        [login, password] = vault.load(vault_data.read()).split()
     db = get_connection(login, password, HOST_NAME, args.port, 'ml_pipe_db')
     try:
         cursor = db.cursor()
