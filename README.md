@@ -13,6 +13,9 @@ CI/CD pipeline for ML model for BigData course
   - Github Actions
 - Secrets vault
   - Ansible Vault
+- Results storage
+  - MySQL
+  - Apache Kafka
 
 ## Dataset
 
@@ -29,6 +32,7 @@ Link: https://www.kaggle.com/competitions/bike-sharing-demand
 - Created Dockerfile and docker-compose.yml
 - Created piplines usin GitHub Actions
 - Added logging of features, predictions and target during functional tests to MySQL database
+- Added logging to special Apache Kafka topic
 
 ## Test results (CD)
 
