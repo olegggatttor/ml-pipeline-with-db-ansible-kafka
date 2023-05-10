@@ -51,7 +51,7 @@ services:
        image: confluentinc/cp-kafka:7.3.2
        container_name: kafka
        ports:
-           - ${KAFKA_PORT_MAPPING}
+           - "9092:9092"
        depends_on:
            - zookeeper
        environment:
@@ -59,8 +59,8 @@ services:
            KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
            KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
            KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
-           KAFKA_LISTENERS: INTERNAL://:${KAFKA_PORT}
-           KAFKA_ADVERTISED_LISTENERS: INTERNAL://${KAFKA_HOST}:${KAFKA_PORT}
+           KAFKA_LISTENERS: INTERNAL://:9092
+           KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:9092
            KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT
 
    kafka-topics-generator:
@@ -71,11 +71,11 @@ services:
        command: >
            bash -c
              "sleep 5s &&
-             kafka-topics --create --topic=kafka-predictions --if-not-exists --bootstrap-server=${KAFKA_HOST}:${KAFKA_PORT}"
+             kafka-topics --create --topic=kafka-predictions --if-not-exists --bootstrap-server=kafka:9092"
 
    kafka-consumer:
        image: confluentinc/cp-kafka:7.3.2
        container_name: kafka-consumer
        command: >
            bash -c
-             "kafka-console-consumer --bootstrap-server ${KAFKA_HOST}:${KAFKA_PORT} --topic kafka-predictions --from-beginning --timeout-ms 25000"
+             "kafka-console-consumer --bootstrap-server kafka:9092 --topic kafka-predictions --from-beginning --timeout-ms 25000"
