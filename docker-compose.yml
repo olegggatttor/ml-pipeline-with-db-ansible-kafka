@@ -1,8 +1,16 @@
 version: '3.8'
 services:
    r_forest_training:
-       build: .
-       command: bash -c "python src/trainer.py --test_preds_out=data/preds.csv --model_save_path=data/r_forest.pickle && python src/predict.py --ansible_password=${ANSIBLE_PASSWORD} --port=${MYSQL_CLIENT_PORT} && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
+       container_name: r_forest_training
+       build:
+           context: .
+           args:
+               ROOT_LOGIN_ANSIBLE: ${ROOT_LOGIN_ANSIBLE}
+               ROOT_PASSWORD_ANSIBLE: ${ROOT_PASSWORD_ANSIBLE}
+               KAFKA_HOST: ${KAFKA_HOST}
+               KAFKA_PORT: ${KAFKA_PORT}
+               ANSIBLE_PASSWORD: ${ANSIBLE_PASSWORD}
+       command: bash -c "python src/trainer.py --test_preds_out=data/preds.csv --model_save_path=data/r_forest.pickle && python src/predict.py --ansible_password=${ANSIBLE_PASSWORD} --db_port=${MYSQL_CLIENT_PORT} && coverage run src/unit_tests/test_preprocess.py && coverage run -a src/unit_tests/test_training.py && coverage report -m"
        ports:
            - 8000:8000
        image: olegggatttor/ml-pipe-bike-sharing-with-db-and-ansible:latest
@@ -30,3 +38,44 @@ services:
            retries: 10
        logging:
            driver: none
+       depends_on:
+           kafka-topics-generator:
+               condition: service_completed_successfully
+   zookeeper:
+       image: confluentinc/cp-zookeeper:7.3.2
+       container_name: zookeeper
+       environment:
+           ZOOKEEPER_CLIENT_PORT: 2181
+
+   kafka:
+       image: confluentinc/cp-kafka:7.3.2
+       container_name: kafka
+       ports:
+           - "${KAFKA_PORT}:${KAFKA_PORT}"
+       depends_on:
+           - zookeeper
+       environment:
+           KAFKA_BROKER_ID: 1
+           KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+           KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+           KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+           KAFKA_LISTENERS: INTERNAL://:${KAFKA_PORT}
+           KAFKA_ADVERTISED_LISTENERS: INTERNAL://${KAFKA_HOST}:${KAFKA_PORT}
+           KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT
+
+   kafka-topics-generator:
+       image: confluentinc/cp-kafka:7.3.2
+       container_name: kafka-topics-generator
+       depends_on:
+           - kafka
+       command: >
+           bash -c
+             "sleep 5s &&
+             kafka-topics --create --topic=kafka-predictions --if-not-exists --bootstrap-server=${KAFKA_HOST}:${KAFKA_PORT}"
+
+   kafka-consumer:
+       image: confluentinc/cp-kafka:7.3.2
+       container_name: kafka-consumer
+       command: >
+           bash -c
+             "kafka-console-consumer --bootstrap-server ${KAFKA_HOST}:${KAFKA_PORT} --topic kafka-predictions --from-beginning --timeout-ms 25000"
