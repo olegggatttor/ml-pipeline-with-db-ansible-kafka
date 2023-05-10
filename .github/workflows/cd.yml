@@ -31,8 +31,9 @@ jobs:
           echo MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" >> .env
           echo MYSQL_CLIENT_PORT="${{ secrets.MYSQL_CLIENT_PORT }}" >> .env
           echo ANSIBLE_PASSWORD="${{ secrets.ANSIBLE_PASSWORD }}" >> .env
-          echo KAFKA_HOST="${{ secrets.KAFKA_HOST }} >> .env
-          echo KAFKA_PORT="${{ secrets.KAFKA_PORT }} >> .env
+          echo KAFKA_HOST="${{ secrets.KAFKA_HOST }}" >> .env
+          echo KAFKA_PORT="${{ secrets.KAFKA_PORT }}" >> .env
+          echo KAFKA_PORT_MAPPING="${{ secrets.KAFKA_PORT }}:${{ secrets.KAFKA_PORT }}" >> .env
       -
         name: Compose config
         run: docker compose config
