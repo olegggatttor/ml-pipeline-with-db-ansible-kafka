@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Pull with compose
-        run: docker-compose pull
+        run: docker-compose pull --ignore-pull-failures
       -
         name: Create .env file
         run: |
