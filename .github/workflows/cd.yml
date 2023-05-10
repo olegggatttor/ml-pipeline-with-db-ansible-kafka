@@ -35,5 +35,7 @@ jobs:
         name: Compose config
         run: docker compose config
       -
-        name: Run tests
-        run: docker-compose up --abort-on-container-exit
+        name: Run background containers
+        run: docker-compose up -d mysql
+      - name: Run tests and kafka-consumer
+        run: docker-compose up r_forest_training kafka-consumer --attach-dependencies

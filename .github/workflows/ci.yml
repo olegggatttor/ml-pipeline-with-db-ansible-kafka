@@ -39,8 +39,10 @@ jobs:
         with:
           context: .
           push: true
-          tags: olegggatttor/ml-pipe-bike-sharing-with-db-and-ansible:latest
+          tags: olegggatttor/ml-pipe-bike-sharing-with-db-ansible-kafka:latest
           build-args: |
             ROOT_LOGIN_ANSIBLE=${{ secrets.ROOT_LOGIN_ANSIBLE }}
             ROOT_PASSWORD_ANSIBLE=${{ secrets.ROOT_PASSWORD_ANSIBLE }}
+            KAFKA_HOST=${{ secrets.KAFKA_HOST }}
+            KAFKA_PORT=${{ secrets.KAFKA_PORT }}
             ANSIBLE_PASSWORD=${{ secrets.ANSIBLE_PASSWORD }}
