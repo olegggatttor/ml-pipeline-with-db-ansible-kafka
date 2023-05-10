@@ -78,4 +78,4 @@ services:
        container_name: kafka-consumer
        command: >
            bash -c
-             "kafka-console-consumer --bootstrap-server kafka:9092 --topic kafka-predictions --from-beginning --timeout-ms 25000"
+             "kafka-console-consumer --bootstrap-server kafka:9092 --topic kafka-predictions --from-beginning --timeout-ms 60000"
