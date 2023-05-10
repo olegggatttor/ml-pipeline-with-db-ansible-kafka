@@ -51,7 +51,7 @@ services:
        image: confluentinc/cp-kafka:7.3.2
        container_name: kafka
        ports:
-           - "${KAFKA_PORT}:${KAFKA_PORT}"
+           - ${KAFKA_PORT}:${KAFKA_PORT}
        depends_on:
            - zookeeper
        environment:
